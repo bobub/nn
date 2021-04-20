@@ -223,8 +223,8 @@ class SwitchTransformer(Module):
         self.layers = clone_module_list(layer, n_layers)
         # Final normalization layer
         self.norm = nn.LayerNorm([layer.size])
-
-    def forward(self, x: torch.Tensor, mask: torch.Tensor):
+                        # x                       mask
+    def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor):
         # Run through each transformer layer
         counts, route_prob, n_dropped, attn, values = [], [], [], [], []
         #counts, route_prob, n_dropped = [], [], []
