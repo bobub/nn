@@ -196,7 +196,8 @@ class SwitchTransformerLayer(Module):
         # Normalize the vectors before doing self attention
         z = self.norm_self_attn(x)
         # Run through self attention, i.e. keys and values are from self
-        self_attn = self.attn(query=z, key=z, value=z, mask=mask)
+        self_attn, attn, values = self.attn(query=z, key=z, value=z, mask=mask)
+        # self_attn = self.attn(query=z, key=z, value=z, mask=mask)
         # Add the self attention results
         x = x + self.dropout(self_attn)
 
@@ -207,7 +208,8 @@ class SwitchTransformerLayer(Module):
         # Add the feed-forward results back
         x = x + self.dropout(ff)
 
-        return x, counts, route_prob, n_dropped
+        return x, counts, route_prob, n_dropped, attn, values
+        #return x, counts, route_prob, n_dropped, attn, values
 
 
 class SwitchTransformer(Module):
@@ -224,13 +226,20 @@ class SwitchTransformer(Module):
 
     def forward(self, x: torch.Tensor, mask: torch.Tensor):
         # Run through each transformer layer
-        counts, route_prob, n_dropped = [], [], []
+        counts, route_prob, n_dropped, attn, values = [], [], [], [], []
+        #counts, route_prob, n_dropped = [], [], []
         for layer in self.layers:
-            x, f, p, n_d = layer(x=x, mask=mask)
+            x, f, p, n_d, a, v = layer(x=x, mask=mask)
+            #x, f, p, n_d = layer(x=x, mask=mask)
             counts.append(f)
             route_prob.append(p)
             n_dropped.append(n_d)
+            attn.append(a)
+            values.append(v)
         # Finally, normalize the vectors
+        logits = x
         x = self.norm(x)
         #
-        return x, torch.stack(counts), torch.stack(route_prob), n_dropped
+        results = {'x':x, 'counts':torch.stack(counts), 'route_prob':torch.stack(route_prob), 'n_dropped':n_dropped, 'logits':logits, 'attention':attn, 'values':values}
+        #return x, torch.stack(counts), torch.stack(route_prob), n_dropped
+        return results
