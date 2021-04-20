@@ -228,6 +228,11 @@ class SwitchTransformer(Module):
         # Run through each transformer layer
         counts, route_prob, n_dropped, attn, values = [], [], [], [], []
         #counts, route_prob, n_dropped = [], [], []
+        
+        # new
+        x = input_ids
+        mask = attention_mask
+        
         for layer in self.layers:
             x, f, p, n_d, a, v = layer(x=x, mask=mask)
             #x, f, p, n_d = layer(x=x, mask=mask)
