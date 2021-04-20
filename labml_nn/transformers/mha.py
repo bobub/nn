@@ -189,4 +189,4 @@ class MultiHeadAttention(Module):
         x = x.reshape(seq_len, batch_size, -1)
 
         # Output layer
-        return self.output(x)
+        return self.output(x), self.attn, value.detach()
