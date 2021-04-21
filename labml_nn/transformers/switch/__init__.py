@@ -195,6 +195,7 @@ class SwitchTransformerLayer(Module):
                  mask: torch.Tensor):
         # Normalize the vectors before doing self attention
         z = self.norm_self_attn(x)
+        print('Z: ',z)
         # Run through self attention, i.e. keys and values are from self
         self_attn, attn, values = self.attn(query=z, key=z, value=z, mask=mask)
         # self_attn = self.attn(query=z, key=z, value=z, mask=mask)
