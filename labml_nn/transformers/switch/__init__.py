@@ -175,7 +175,8 @@ class SwitchTransformerLayer(Module):
                  d_model: int,
                  attn: MultiHeadAttention,
                  feed_forward: SwitchFeedForward,
-                 dropout_prob: float):
+                 dropout_prob: float,
+                 first:bool = True):
         """
         * `d_model` is the token embedding size
         * `attn` is the attention module
@@ -189,13 +190,15 @@ class SwitchTransformerLayer(Module):
         self.dropout = nn.Dropout(dropout_prob)
         self.norm_self_attn = nn.LayerNorm([d_model])
         self.norm_ff = nn.LayerNorm([d_model])
+        self.first=first
 
     def forward(self, *,
                  x: torch.Tensor,
                  mask: torch.Tensor):
         # Normalize the vectors before doing self attention
         z = self.norm_self_attn(x)
-        #print('Z: ',z)
+        if first:
+           print('Z: ',z)
         # Run through self attention, i.e. keys and values are from self
         self_attn, attn, values = self.attn(query=z, key=z, value=z, mask=mask)
         # self_attn = self.attn(query=z, key=z, value=z, mask=mask)
@@ -218,12 +221,13 @@ class SwitchTransformer(Module):
     ## Switch Transformer
     """
 
-    def __init__(self, layer: SwitchTransformerLayer, n_layers: int):
+    def __init__(self, layer: SwitchTransformerLayer, n_layers: int, first:bool=True):
         super().__init__()
         # Make copies of the transformer layer
         self.layers = clone_module_list(layer, n_layers)
         # Final normalization layer
         self.norm = nn.LayerNorm([layer.size])
+        self.first=first
                         # x                       mask
     def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor):
         # Run through each transformer layer
@@ -237,7 +241,8 @@ class SwitchTransformer(Module):
         for layer in self.layers:
             #print('X: ',x)
             x, f, p, n_d, a, v = layer(x=x, mask=attention_mask)
-            print('X: ',x)
+            if self.first:
+              print('X: ',x)
             #x, f, p, n_d = layer(x=x, mask=mask)
             counts.append(f)
             route_prob.append(p)
@@ -250,4 +255,5 @@ class SwitchTransformer(Module):
         #
         results = {'x':x, 'counts':torch.stack(counts), 'route_prob':torch.stack(route_prob), 'n_dropped':n_dropped, 'logits':logits, 'attention':attn, 'values':values}
         #return x, torch.stack(counts), torch.stack(route_prob), n_dropped
+        self.first=False
         return results
