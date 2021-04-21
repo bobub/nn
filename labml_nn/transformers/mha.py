@@ -152,7 +152,7 @@ class MultiHeadAttention(Module):
 
             # Same mask applied to all heads.
             mask = mask.unsqueeze(-1)
-            if first:
+            if self.first:
               print('Mask Shape: ', mask.shape)
               print(mask)
 
@@ -162,7 +162,7 @@ class MultiHeadAttention(Module):
         key = self.key(key)
         value = self.value(value)
         
-        if first:
+        if self.first:
           
           print('Query: ',query)
           print('Keys: ',key)
@@ -170,7 +170,7 @@ class MultiHeadAttention(Module):
         # Compute attention scores $Q K^\top$.
         # This gives a tensor of shape `[seq_len, seq_len, batch_size, heads]`.
         scores = self.get_scores(query, key)
-        if first:
+        if self.first:
           print('Scores Shape:', scores.shape)
           print(scores)
 
@@ -180,7 +180,7 @@ class MultiHeadAttention(Module):
         # Apply mask
         if mask is not None:
            scores = scores.masked_fill(mask == 0, float('-inf'))
-           if first:
+           if self.first:
               print('Scores AFTER masking: ',scores)
 
         # $softmax$ attention along the key sequence dimension
