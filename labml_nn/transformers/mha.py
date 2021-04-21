@@ -151,6 +151,7 @@ class MultiHeadAttention(Module):
             # Same mask applied to all heads.
             mask = mask.unsqueeze(-1)
             print('Mask Shape: ', mask.shape)
+            print(mask)
 
         # Prepare `query`, `key` and `value` for attention computation.
         # These will then have shape `[seq_len, batch_size, heads, d_k]`.
@@ -162,6 +163,7 @@ class MultiHeadAttention(Module):
         # This gives a tensor of shape `[seq_len, seq_len, batch_size, heads]`.
         scores = self.get_scores(query, key)
         print('Scores Shape:', scores.shape)
+        print(scores)
 
         # Scale scores $\frac{Q K^\top}{\sqrt{d_k}}$
         scores *= self.scale
