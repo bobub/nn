@@ -81,7 +81,7 @@ class MultiHeadAttention(Module):
     Softmax is calculated along the axis of of the sequence (or time).
     """
 
-    def __init__(self, heads: int, d_model: int, dropout_prob: float = 0.1, bias: bool = True):
+    def __init__(self, heads: int, d_model: int, dropout_prob: float = 0.1, bias: bool = True, first: bool=True):
         """
         * `heads` is the number of heads.
         * `d_model` is the number of features in the `query`, `key` and `value` vectors.
@@ -111,6 +111,8 @@ class MultiHeadAttention(Module):
 
         # We store attentions so that it can be used for logging, or other computations if needed
         self.attn = None
+        
+        self.first = first
 
     def get_scores(self, query: torch.Tensor, key: torch.Tensor):
         """
@@ -150,22 +152,27 @@ class MultiHeadAttention(Module):
 
             # Same mask applied to all heads.
             mask = mask.unsqueeze(-1)
-            #print('Mask Shape: ', mask.shape)
-            #print(mask)
+            if first:
+              print('Mask Shape: ', mask.shape)
+              print(mask)
 
         # Prepare `query`, `key` and `value` for attention computation.
         # These will then have shape `[seq_len, batch_size, heads, d_k]`.
         query = self.query(query)
         key = self.key(key)
         value = self.value(value)
-        #print('Query: ',query)
-        #print('Keys: ',key)
+        
+        if first:
+          
+          print('Query: ',query)
+          print('Keys: ',key)
 
         # Compute attention scores $Q K^\top$.
         # This gives a tensor of shape `[seq_len, seq_len, batch_size, heads]`.
         scores = self.get_scores(query, key)
-        #print('Scores Shape:', scores.shape)
-        #print(scores)
+        if first:
+          print('Scores Shape:', scores.shape)
+          print(scores)
 
         # Scale scores $\frac{Q K^\top}{\sqrt{d_k}}$
         scores *= self.scale
@@ -173,7 +180,8 @@ class MultiHeadAttention(Module):
         # Apply mask
         if mask is not None:
            scores = scores.masked_fill(mask == 0, float('-inf'))
-           #print('Scores AFTER masking: ',scores)
+           if first:
+              print('Scores AFTER masking: ',scores)
 
         # $softmax$ attention along the key sequence dimension
         # $\underset{seq}{softmax}\Bigg(\frac{Q K^\top}{\sqrt{d_k}}\Bigg)$
@@ -194,6 +202,8 @@ class MultiHeadAttention(Module):
 
         # Concatenate multiple heads
         x = x.reshape(seq_len, batch_size, -1)
+        
+        self.first=False
 
         # Output layer
         return self.output(x), self.attn, value.detach()
