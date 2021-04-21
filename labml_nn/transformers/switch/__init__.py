@@ -197,7 +197,7 @@ class SwitchTransformerLayer(Module):
                  mask: torch.Tensor):
         # Normalize the vectors before doing self attention
         z = self.norm_self_attn(x)
-        if first:
+        if self.first:
            print('Z: ',z)
         # Run through self attention, i.e. keys and values are from self
         self_attn, attn, values = self.attn(query=z, key=z, value=z, mask=mask)
@@ -211,6 +211,8 @@ class SwitchTransformerLayer(Module):
         ff, counts, route_prob, n_dropped = self.feed_forward(z)
         # Add the feed-forward results back
         x = x + self.dropout(ff)
+        self.first=False
+        
 
         return x, counts, route_prob, n_dropped, attn, values
         #return x, counts, route_prob, n_dropped, attn, values
@@ -249,11 +251,11 @@ class SwitchTransformer(Module):
             n_dropped.append(n_d)
             attn.append(a)
             values.append(v)
+            self.first=False
         # Finally, normalize the vectors
         logits = x
         x = self.norm(x)
         #
         results = {'x':x, 'counts':torch.stack(counts), 'route_prob':torch.stack(route_prob), 'n_dropped':n_dropped, 'logits':logits, 'attention':attn, 'values':values}
         #return x, torch.stack(counts), torch.stack(route_prob), n_dropped
-        self.first=False
         return results
