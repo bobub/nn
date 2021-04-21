@@ -169,8 +169,9 @@ class MultiHeadAttention(Module):
         scores *= self.scale
 
         # Apply mask
-        # if mask is not None:
-        #    scores = scores.masked_fill(mask == 0, float('-inf'))
+        if mask is not None:
+           scores = scores.masked_fill(mask == 0, float('-inf'))
+           print('Scores AFTER masking: ',scores)
 
         # $softmax$ attention along the key sequence dimension
         # $\underset{seq}{softmax}\Bigg(\frac{Q K^\top}{\sqrt{d_k}}\Bigg)$
