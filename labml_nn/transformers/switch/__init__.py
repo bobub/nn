@@ -231,10 +231,9 @@ class SwitchTransformer(Module):
         
         # new
         x = input_ids
-        mask = attention_mask
         
         for layer in self.layers:
-            x, f, p, n_d, a, v = layer(x=x, mask=mask)
+            x, f, p, n_d, a, v = layer(x=x, mask=attention_mask)
             #x, f, p, n_d = layer(x=x, mask=mask)
             counts.append(f)
             route_prob.append(p)
