@@ -237,6 +237,7 @@ class SwitchTransformer(Module):
         for layer in self.layers:
             #print('X: ',x)
             x, f, p, n_d, a, v = layer(x=x, mask=attention_mask)
+            print('X: ',x)
             #x, f, p, n_d = layer(x=x, mask=mask)
             counts.append(f)
             route_prob.append(p)
