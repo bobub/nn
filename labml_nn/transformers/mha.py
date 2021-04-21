@@ -158,6 +158,8 @@ class MultiHeadAttention(Module):
         query = self.query(query)
         key = self.key(key)
         value = self.value(value)
+        print('Query: ',query)
+        print('Keys: ',key)
 
         # Compute attention scores $Q K^\top$.
         # This gives a tensor of shape `[seq_len, seq_len, batch_size, heads]`.
