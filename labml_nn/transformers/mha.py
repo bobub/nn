@@ -158,14 +158,14 @@ class MultiHeadAttention(Module):
         query = self.query(query)
         key = self.key(key)
         value = self.value(value)
-        print('Query: ',query)
-        print('Keys: ',key)
+        #print('Query: ',query)
+        #print('Keys: ',key)
 
         # Compute attention scores $Q K^\top$.
         # This gives a tensor of shape `[seq_len, seq_len, batch_size, heads]`.
         scores = self.get_scores(query, key)
-        print('Scores Shape:', scores.shape)
-        print(scores)
+        #print('Scores Shape:', scores.shape)
+        #print(scores)
 
         # Scale scores $\frac{Q K^\top}{\sqrt{d_k}}$
         scores *= self.scale
@@ -173,7 +173,7 @@ class MultiHeadAttention(Module):
         # Apply mask
         if mask is not None:
            scores = scores.masked_fill(mask == 0, float('-inf'))
-           print('Scores AFTER masking: ',scores)
+           #print('Scores AFTER masking: ',scores)
 
         # $softmax$ attention along the key sequence dimension
         # $\underset{seq}{softmax}\Bigg(\frac{Q K^\top}{\sqrt{d_k}}\Bigg)$
