@@ -150,8 +150,8 @@ class MultiHeadAttention(Module):
 
             # Same mask applied to all heads.
             mask = mask.unsqueeze(-1)
-            print('Mask Shape: ', mask.shape)
-            print(mask)
+            #print('Mask Shape: ', mask.shape)
+            #print(mask)
 
         # Prepare `query`, `key` and `value` for attention computation.
         # These will then have shape `[seq_len, batch_size, heads, d_k]`.
