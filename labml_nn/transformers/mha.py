@@ -170,39 +170,28 @@ class MultiHeadAttention(Module):
                                 mask = mask, 
                                 dim = 1,
                                 memory_efficient = False) # can't be set to true for our case
-#         if mask is None:
-          
-#           attn = self.softmax(scores)
-        
-#         if self.first:
-#           print('Scores AFTER masking: ',scores)
 
         # $softmax$ attention along the key sequence dimension
         # $\underset{seq}{softmax}\Bigg(\frac{Q K^\top}{\sqrt{d_k}}\Bigg)$
         #attn = self.softmax(scores)
-#         print('Attention: ',attn)
 
         # Save attentions if debugging
         tracker.debug('attn', attn)
 
         # Apply dropout
         attn = self.dropout(attn)
-#         print('Attention AFTER dropout: ',attn)
         
 
         # Multiply by values
         # $$\underset{seq}{softmax}\Bigg(\frac{Q K^\top}{\sqrt{d_k}}\Bigg)V$$
         x = torch.einsum("ijbh,jbhd->ibhd", attn, value)
-#         print('Unshaped X: ',x)
 
         # Save attentions for any other calculations 
         self.attn = attn.detach()
 
         # Concatenate multiple heads
         x = x.reshape(seq_len, batch_size, -1)
-#         print('Reshaped x: ',x)
         
-        self.first=False
 
         # Output layer
         return self.output(x), self.attn, value.detach()
