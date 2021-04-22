@@ -246,6 +246,7 @@ class SwitchTransformer(Module):
         logits = x
         x = self.norm(x)
         #
-        results = {'x':x, 'counts':torch.stack(counts), 'route_prob':torch.stack(route_prob), 'n_dropped':n_dropped, 'logits':logits, 'attention':attn, 'values':values}
+        results = {'x':x, 'counts':torch.stack(counts), 'route_prob':torch.stack(route_prob), 'n_dropped':n_dropped, 
+                   'logits':logits, 'attention':torch.stack(attn), 'values':torch.stack(values)}
         #return x, torch.stack(counts), torch.stack(route_prob), n_dropped
         return results
