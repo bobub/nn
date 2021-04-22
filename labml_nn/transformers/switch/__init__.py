@@ -190,15 +190,12 @@ class SwitchTransformerLayer(Module):
         self.dropout = nn.Dropout(dropout_prob)
         self.norm_self_attn = nn.LayerNorm([d_model])
         self.norm_ff = nn.LayerNorm([d_model])
-        self.first=first
 
     def forward(self, *,
                  x: torch.Tensor,
                  mask: torch.Tensor):
         # Normalize the vectors before doing self attention
         z = self.norm_self_attn(x)
-        if self.first:
-           print('Z: ',z)
         # Run through self attention, i.e. keys and values are from self
         self_attn, attn, values = self.attn(query=z, key=z, value=z, mask=mask)
         # self_attn = self.attn(query=z, key=z, value=z, mask=mask)
@@ -211,7 +208,6 @@ class SwitchTransformerLayer(Module):
         ff, counts, route_prob, n_dropped = self.feed_forward(z)
         # Add the feed-forward results back
         x = x + self.dropout(ff)
-        self.first=False
         
 
         return x, counts, route_prob, n_dropped, attn, values
@@ -229,7 +225,6 @@ class SwitchTransformer(Module):
         self.layers = clone_module_list(layer, n_layers)
         # Final normalization layer
         self.norm = nn.LayerNorm([layer.size])
-        self.first=first
                         # x                       mask
     def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor):
         # Run through each transformer layer
@@ -238,21 +233,16 @@ class SwitchTransformer(Module):
         
         # new
         x = input_ids
-        print('x: ',x)
         
         for layer in self.layers:
             #print('X: ',x)
             x, f, p, n_d, a, v = layer(x=x, mask=attention_mask)
-            if self.first:
-              print('X: ',x)
             #x, f, p, n_d = layer(x=x, mask=mask)
             counts.append(f)
             route_prob.append(p)
             n_dropped.append(n_d)
             attn.append(a)
             values.append(v)
-            if self.first:
-              break
             #self.first=False
         # Finally, normalize the vectors
         logits = x
