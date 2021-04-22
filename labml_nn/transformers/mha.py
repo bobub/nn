@@ -102,7 +102,6 @@ class MultiHeadAttention(Module):
 
         # Softmax for attention along the time dimension of `key`
         self.softmax = nn.Softmax(dim=1)
-        #self.masked_softmax = masked_softmax()
 
         # Output layer
         self.output = nn.Linear(d_model, d_model)
@@ -152,33 +151,21 @@ class MultiHeadAttention(Module):
 
             # Same mask applied to all heads.
             mask = mask.unsqueeze(-1)
-            #print('Mask Shape: ', mask.shape)
-            #print(mask)
 
         # Prepare `query`, `key` and `value` for attention computation.
         # These will then have shape `[seq_len, batch_size, heads, d_k]`.
         query = self.query(query)
         key = self.key(key)
         value = self.value(value)
-        
-#         if self.first:
-          
-#           print('Query: ',query)
-#           print('Keys: ',key)
 
         # Compute attention scores $Q K^\top$.
         # This gives a tensor of shape `[seq_len, seq_len, batch_size, heads]`.
         scores = self.get_scores(query, key)
-#         if self.first:
-#           print('Scores Shape:', scores.shape)
-#           print(scores)
 
         # Scale scores $\frac{Q K^\top}{\sqrt{d_k}}$
         scores *= self.scale
 
         # Apply mask
-#         if mask is not None:
-#            #scores = scores.masked_fill(mask == 0, float('-inf'))
         attn = masked_softmax(vector = scores,
                                 mask = mask, 
                                 dim = 1,
