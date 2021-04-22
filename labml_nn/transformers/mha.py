@@ -22,6 +22,7 @@ from torch import nn as nn
 
 from labml import tracker
 from labml_helpers.module import Module
+from allennlp.nn.util import masked_softmax
 
 
 class PrepareForMultiHeadAttention(Module):
@@ -180,12 +181,16 @@ class MultiHeadAttention(Module):
         # Apply mask
         if mask is not None:
            scores = scores.masked_fill(mask == 0, float('-inf'))
+           attn = masked_softmax(vector = scores,
+                                mask = mask, 
+                                dim = 1,
+                                memory_efficient = False) # can't be set to true for our case
            if self.first:
               print('Scores AFTER masking: ',scores)
 
         # $softmax$ attention along the key sequence dimension
         # $\underset{seq}{softmax}\Bigg(\frac{Q K^\top}{\sqrt{d_k}}\Bigg)$
-        attn = self.softmax(scores)
+        #attn = self.softmax(scores)
         print('Attention: ',attn)
 
         # Save attentions if debugging
