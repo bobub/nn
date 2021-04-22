@@ -180,11 +180,15 @@ class MultiHeadAttention(Module):
 
         # Apply mask
         if mask is not None:
-           scores = scores.masked_fill(mask == 0, float('-inf'))
+           #scores = scores.masked_fill(mask == 0, float('-inf'))
            attn = masked_softmax(vector = scores,
                                 mask = mask, 
                                 dim = 1,
                                 memory_efficient = False) # can't be set to true for our case
+        if mask is None:
+          
+          attn = self.softmax(scores)
+        
            if self.first:
               print('Scores AFTER masking: ',scores)
 
