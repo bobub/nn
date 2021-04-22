@@ -189,8 +189,8 @@ class MultiHeadAttention(Module):
           
           attn = self.softmax(scores)
         
-           if self.first:
-              print('Scores AFTER masking: ',scores)
+        if self.first:
+          print('Scores AFTER masking: ',scores)
 
         # $softmax$ attention along the key sequence dimension
         # $\underset{seq}{softmax}\Bigg(\frac{Q K^\top}{\sqrt{d_k}}\Bigg)$
