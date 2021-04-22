@@ -102,7 +102,7 @@ class MultiHeadAttention(Module):
 
         # Softmax for attention along the time dimension of `key`
         self.softmax = nn.Softmax(dim=1)
-        self.masked_softmax = masked_softmax()
+        #self.masked_softmax = masked_softmax()
 
         # Output layer
         self.output = nn.Linear(d_model, d_model)
@@ -179,7 +179,7 @@ class MultiHeadAttention(Module):
         # Apply mask
 #         if mask is not None:
 #            #scores = scores.masked_fill(mask == 0, float('-inf'))
-        attn = self.masked_softmax(vector = scores,
+        attn = masked_softmax(vector = scores,
                                 mask = mask, 
                                 dim = 1,
                                 memory_efficient = False) # can't be set to true for our case
