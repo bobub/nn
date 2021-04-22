@@ -81,7 +81,7 @@ class MultiHeadAttention(Module):
     Softmax is calculated along the axis of of the sequence (or time).
     """
 
-    def __init__(self, heads: int, d_model: int, dropout_prob: float = 0.1, bias: bool = True, first: bool=True):
+    def __init__(self, heads: int, d_model: int, dropout_prob: float = 0.1, bias: bool = True):
         """
         * `heads` is the number of heads.
         * `d_model` is the number of features in the `query`, `key` and `value` vectors.
@@ -112,7 +112,7 @@ class MultiHeadAttention(Module):
         # We store attentions so that it can be used for logging, or other computations if needed
         self.attn = None
         
-        self.first = first
+        self.first = True
 
     def get_scores(self, query: torch.Tensor, key: torch.Tensor):
         """
