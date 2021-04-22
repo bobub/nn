@@ -192,16 +192,19 @@ class MultiHeadAttention(Module):
 
         # Apply dropout
         attn = self.dropout(attn)
+        print('Attention: ',attn)
 
         # Multiply by values
         # $$\underset{seq}{softmax}\Bigg(\frac{Q K^\top}{\sqrt{d_k}}\Bigg)V$$
         x = torch.einsum("ijbh,jbhd->ibhd", attn, value)
+        print('Unshaped X: ',x)
 
         # Save attentions for any other calculations 
         self.attn = attn.detach()
 
         # Concatenate multiple heads
         x = x.reshape(seq_len, batch_size, -1)
+        print('Reshaped x: ',x)
         
         self.first=False
 
