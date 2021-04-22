@@ -197,7 +197,6 @@ class SwitchTransformerLayer(Module):
         z = self.norm_self_attn(x)
         # Run through self attention, i.e. keys and values are from self
         self_attn, attn, values = self.attn(query=z, key=z, value=z, mask=mask)
-        # self_attn = self.attn(query=z, key=z, value=z, mask=mask)
         # Add the self attention results
         x = x + self.dropout(self_attn)
 
@@ -210,7 +209,6 @@ class SwitchTransformerLayer(Module):
         
 
         return x, counts, route_prob, n_dropped, attn, values
-        #return x, counts, route_prob, n_dropped, attn, values
 
 
 class SwitchTransformer(Module):
@@ -228,15 +226,12 @@ class SwitchTransformer(Module):
     def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor):
         # Run through each transformer layer
         counts, route_prob, n_dropped, attn, values = [], [], [], [], []
-        #counts, route_prob, n_dropped = [], [], []
         
         # new
         x = input_ids
         
         for layer in self.layers:
-            #print('X: ',x)
             x, f, p, n_d, a, v = layer(x=x, mask=attention_mask)
-            #x, f, p, n_d = layer(x=x, mask=mask)
             counts.append(f)
             route_prob.append(p)
             n_dropped.append(n_d)
@@ -248,5 +243,4 @@ class SwitchTransformer(Module):
         #
         results = {'x':x, 'counts':torch.stack(counts), 'route_prob':torch.stack(route_prob), 'n_dropped':n_dropped, 
                    'logits':logits, 'attention':torch.stack(attn), 'values':torch.stack(values)}
-        #return x, torch.stack(counts), torch.stack(route_prob), n_dropped
         return results
