@@ -186,13 +186,15 @@ class MultiHeadAttention(Module):
         # $softmax$ attention along the key sequence dimension
         # $\underset{seq}{softmax}\Bigg(\frac{Q K^\top}{\sqrt{d_k}}\Bigg)$
         attn = self.softmax(scores)
+        print('Attention: ',attn)
 
         # Save attentions if debugging
         tracker.debug('attn', attn)
 
         # Apply dropout
         attn = self.dropout(attn)
-        print('Attention: ',attn)
+        print('Attention AFTER dropout: ',attn)
+        
 
         # Multiply by values
         # $$\underset{seq}{softmax}\Bigg(\frac{Q K^\top}{\sqrt{d_k}}\Bigg)V$$
