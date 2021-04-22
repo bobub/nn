@@ -251,7 +251,9 @@ class SwitchTransformer(Module):
             n_dropped.append(n_d)
             attn.append(a)
             values.append(v)
-            self.first=False
+            if self.first:
+              break
+            #self.first=False
         # Finally, normalize the vectors
         logits = x
         x = self.norm(x)
