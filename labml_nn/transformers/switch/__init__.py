@@ -175,8 +175,7 @@ class SwitchTransformerLayer(Module):
                  d_model: int,
                  attn: MultiHeadAttention,
                  feed_forward: SwitchFeedForward,
-                 dropout_prob: float,
-                 first:bool = True):
+                 dropout_prob: float):
         """
         * `d_model` is the token embedding size
         * `attn` is the attention module
@@ -219,7 +218,7 @@ class SwitchTransformer(Module):
     ## Switch Transformer
     """
 
-    def __init__(self, layer: SwitchTransformerLayer, n_layers: int, first:bool=True):
+    def __init__(self, layer: SwitchTransformerLayer, n_layers: int):
         super().__init__()
         # Make copies of the transformer layer
         self.layers = clone_module_list(layer, n_layers)
@@ -243,7 +242,6 @@ class SwitchTransformer(Module):
             n_dropped.append(n_d)
             attn.append(a)
             values.append(v)
-            #self.first=False
         # Finally, normalize the vectors
         logits = x
         x = self.norm(x)
