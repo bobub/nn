@@ -209,6 +209,20 @@ class SwitchTransformerLayer(Module):
         
 
         return x, counts, route_prob, n_dropped, attn, values
+      
+class Pooler(Module):
+    def __init__(self, hidden_size):
+        super().__init__()
+        self.dense = nn.Linear(hidden_size, hidden_size)
+        self.activation = nn.Tanh()
+
+    def forward(self, hidden_states):
+        # We "pool" the model by simply taking the hidden state corresponding
+        # to the first token.
+        first_token_tensor = hidden_states[:, 0]
+        pooled_output = self.dense(first_token_tensor)
+        pooled_output = self.activation(pooled_output)
+        return pooled_output
 
 
 class SwitchTransformer(Module):
@@ -222,6 +236,7 @@ class SwitchTransformer(Module):
         self.layers = clone_module_list(layer, n_layers)
         # Final normalization layer
         self.norm = nn.LayerNorm([layer.size])
+        self.pooler = Pooler(hidden_size=layer.size)
                         # x                       mask
     def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor):
         # Run through each transformer layer
@@ -239,8 +254,12 @@ class SwitchTransformer(Module):
             values.append(v)
         # Finally, normalize the vectors
         logits = x
+        length, batch, d_model = logits.shape
+        pooled_output = self.pooler(logits.reshape(batch, length, d_model))
+        
+        
         x = self.norm(x)
         #
         results = {'x':x, 'counts':torch.stack(counts), 'route_prob':torch.stack(route_prob), 'n_dropped':n_dropped, 
-                   'logits':logits, 'attention':torch.stack(attn), 'values':torch.stack(values)}
+                   'logits':logits, 'attention':torch.stack(attn), 'values':torch.stack(values), 'pooler_output':pooled_output}
         return results
