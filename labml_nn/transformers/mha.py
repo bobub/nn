@@ -174,6 +174,7 @@ class MultiHeadAttention(Module):
         # $softmax$ attention along the key sequence dimension
         # $\underset{seq}{softmax}\Bigg(\frac{Q K^\top}{\sqrt{d_k}}\Bigg)$
         #attn = self.softmax(scores)
+        assert torch.any(torch.isnan(attn))==False, 'Switch Attention contains NaN'
 
         # Save attentions if debugging
         tracker.debug('attn', attn)
