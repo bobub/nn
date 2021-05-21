@@ -57,7 +57,9 @@ class PrepareForMultiHeadAttention(Module):
         print('d_model, heads, d_k: ',self.d_model,self.heads, self.d_k)
 
         # Linear transform - reshaping to deal with very weird torch bug
-        x = self.linear(x.view(self.d_k*batch_size, self.d_model))
+        x = x.view(self.d_k*batch_size, self.d_model)
+        print('X after reshape, before linear transform: ',x.shape)
+        x = self.linear(x)
         x = x.view(self.d_k, batch_size, self.d_model)
         print('X shape after manipulation: ',x.shape)
 
