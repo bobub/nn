@@ -50,6 +50,9 @@ class PrepareForMultiHeadAttention(Module):
         # We apply the linear transformation to the last dimension and split that into
         # the heads.
         head_shape = x.shape[:-1]
+        
+        print('X Shape:',x.shape)
+        print('D_model, heads, d_k: ',self.d_model, self.heads, self.d_k)
 
         # Linear transform
         x = self.linear(x)
