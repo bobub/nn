@@ -52,7 +52,7 @@ class PrepareForMultiHeadAttention(Module):
         head_shape = x.shape[:-1]
         
         print('X Shape:',x.shape)
-        print('D_model, heads, d_k: ',self.d_model, self.heads, self.d_k)
+        print('heads, d_k: ', self.heads, self.d_k)
 
         # Linear transform
         x = self.linear(x)
