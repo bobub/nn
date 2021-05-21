@@ -39,7 +39,7 @@ class PrepareForMultiHeadAttention(Module):
     def __init__(self, d_model: int, heads: int, d_k: int, bias: bool):
         super().__init__()
         # Linear layer for linear transform
-        self.linear = nn.Linear(d_model, heads * d_k, bias=bias)
+        self.linear = nn.Linear(d_model, d_model, bias=bias)
         # Number of heads
         self.heads = heads
         # Number of dimensions in vectors in each head
