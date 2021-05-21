@@ -230,12 +230,14 @@ class SwitchTransformer(Module):
     ## Switch Transformer
     """
 
-    def __init__(self, layer: SwitchTransformerLayer, n_layers: int):
+    def __init__(self, layer: SwitchTransformerLayer, n_layers: int, d_out: int, dropout_prob: float):
         super().__init__()
         # Make copies of the transformer layer
         self.layers = clone_module_list(layer, n_layers)
         # Final normalization layer
         self.norm = nn.LayerNorm([layer.size])
+        self.linear = nn.Linear(layer.size, d_out)
+        self.dropout = nn.Dropout(dropout_prob)
         self.pooler = Pooler(hidden_size=layer.size)
                         # x                       mask
     def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor):
@@ -252,10 +254,13 @@ class SwitchTransformer(Module):
             n_dropped.append(n_d)
             attn.append(a)
             values.append(v)
-        # Finally, normalize the vectors
-        logits = x
-        length, batch, d_model = logits.shape
-        pooled_output = self.pooler(logits.reshape(batch, length, d_model))
+        # Finally, return to d_out to be comparable with teacher
+        logits = self.linear(x)
+        logits = self.dropout(logits)
+        length, batch, dim_out = logits.shape
+        
+        # pool outputs
+        pooled_output = self.pooler(logits.reshape(batch, length, dim_out))
         
         
         x = self.norm(x)
