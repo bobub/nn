@@ -44,6 +44,7 @@ class PrepareForMultiHeadAttention(Module):
         self.heads = heads
         # Number of dimensions in vectors in each head
         self.d_k = d_k
+        self.d_model = d_model
 
     def forward(self, x: torch.Tensor):
         # Input has shape `[seq_len, batch_size, d_model]` or `[batch_size, d_model]`.
@@ -52,7 +53,7 @@ class PrepareForMultiHeadAttention(Module):
         head_shape = x.shape[:-1]
         
         print('X Shape:',x.shape)
-        print('heads, d_k: ', self.heads, self.d_k)
+        print('d_model, heads, d_k: ',self.d_model,self.heads, self.d_k)
 
         # Linear transform
         x = self.linear(x)
