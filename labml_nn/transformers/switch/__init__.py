@@ -249,7 +249,7 @@ class SwitchTransformer(Module):
         
         for layer in self.layers:
             x, f, p, n_d, a, v = layer(x=x, mask=attention_mask)
-            print('After a layer, x shape: ',x.shape)
+            # print('After a layer, x shape: ',x.shape)
             counts.append(f)
             route_prob.append(p)
             n_dropped.append(n_d)
