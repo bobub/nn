@@ -53,19 +53,19 @@ class PrepareForMultiHeadAttention(Module):
         head_shape = x.shape[:-1]
         batch_size = x.shape[1]
         
-        print('X Shape:',x.shape)
-        print('d_model, heads, d_k: ',self.d_model,self.heads, self.d_k)
+        #print('X Shape:',x.shape)
+        #print('d_model, heads, d_k: ',self.d_model,self.heads, self.d_k)
 
         # Linear transform - reshaping to deal with very weird torch bug
-        x = x.view(self.d_k*batch_size, self.d_model)
-        print('X after reshape, before linear transform: ',x.shape)
+        #x = x.view(self.d_k*batch_size, self.d_model)
+        #print('X after reshape, before linear transform: ',x.shape)
         x = self.linear(x)
-        x = x.view(self.d_k, batch_size, self.d_model)
-        print('X shape after manipulation: ',x.shape)
+        #x = x.view(self.d_k, batch_size, self.d_model)
+        #print('X shape after manipulation: ',x.shape)
 
         # Split last dimension into heads
         x = x.view(*head_shape, self.heads, self.d_k)
-        print('X shape at end: ',x.shape)
+        #print('X shape at end: ',x.shape)
 
         # Output has shape `[seq_len, batch_size, heads, d_k]` or `[batch_size, d_model]`
         return x
