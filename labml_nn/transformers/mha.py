@@ -198,12 +198,12 @@ class MultiHeadAttention(Module):
         x = torch.einsum("ijbh,jbhd->ibhd", attn, value)
 
         # Save attentions for any other calculations 
-        self.attn = attn.detach()
+        self.attn = attn
 
         # Concatenate multiple heads
         x = x.reshape(seq_len, batch_size, -1)
         
 
         # Output layer
-        return self.output(x), self.attn, value.detach()
+        return self.output(x), self.attn, value
       # return self.output(x)
