@@ -205,5 +205,5 @@ class MultiHeadAttention(Module):
         
 
         # Output layer
-        return self.output(x), self.attn, value
+        return self.output(x), scores, value
       # return self.output(x)
