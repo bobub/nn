@@ -53,7 +53,7 @@ class PrepareForMultiHeadAttention(Module):
         head_shape = x.shape[:-1]
         batch_size = x.shape[1]
         
-        #print('X Shape:',x.shape)
+        print('X Shape:',x.shape)
         #print('d_model, heads, d_k: ',self.d_model,self.heads, self.d_k)
 
         # Linear transform - reshaping to deal with very weird torch bug
