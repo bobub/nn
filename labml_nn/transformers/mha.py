@@ -54,9 +54,9 @@ class PrepareForMultiHeadAttention(Module):
         batch_size = x.shape[1]
         seq_len = x.shape[0]
         
-        print('X Shape:',x.shape)
+        #print('X Shape:',x.shape)
         #print('d_model, heads, d_k: ',self.d_model,self.heads, self.d_k)
-        print('nn.linear: ',self.linear)
+        #print('nn.linear: ',self.linear)
 
         # Linear transform - reshaping to deal with very weird torch bug
         #x = x.view(self.d_k*batch_size, self.d_model)
